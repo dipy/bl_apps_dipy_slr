@@ -1,9 +1,10 @@
 {
-    "command": "dipy_fit_dti",
-    "b0_threshold": 5,
-    "bvecs_tol"
-    "dwi": "testdata/data.nii.gz",
-    "bvals": "testdata/data.bvals",
-    "bvecs": "testdata/data.bvecs",
-    "mask": "testdata/mask.nii.gz",
+    "command": "dipy_slr",
+    "x0":'affine',
+    "rm_small_clusters":50,
+    "greater_than":50,
+    "less_than":250,
+    "nb_pts":20,
+    "static_tracks":"*.trk",
+    "moving_tracks":"*.trk"
 }
