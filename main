@@ -13,7 +13,7 @@ case "$cmd" in
         cat > script.sh <<EOF
 #!/bin/bash
 STATIC_TRK=`jq -r '.static_tracks' config.json`
-if [ $STATIC_TRK == "null" ]; then
+if [ "$STATIC_TRK" == "null" ]; then
     STATIC_TRK=$(pwd)/bundle_atlas_hcp842/Atlas_in_MNI_Space_16_bundles/whole_brain/whole_brain_MNI.trk
     dipy_fetch "bundle_atlas_hcp842" --out_dir $(pwd)
 fi
@@ -32,7 +32,7 @@ $cmd --force \
     --nb_pts $(jq -r .nb_pts config.json) \
     $PROGRESSIVE  \
     --out_moved "tractogram.trk"
-    $STATIC_TRK $(jq -r .moving_tracks config.json) --mix_names
+    "$STATIC_TRK" $(jq -r .moving_tracks config.json) --mix_names
 EOF
         ;;
     *)
