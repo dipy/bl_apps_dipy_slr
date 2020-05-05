@@ -12,19 +12,25 @@ case "$cmd" in
     dipy_slr)
         cat > script.sh <<EOF
 #!/bin/bash
-STATIC_TRK=`jq -r '.static_trk' config.json`
+STATIC_TRK=`jq -r '.static_tracks' config.json`
 if [ $STATIC_TRK == "null" ]; then
     STATIC_TRK=$(pwd)/bundle_atlas_hcp842/Atlas_in_MNI_Space_16_bundles/whole_brain/whole_brain_MNI.trk
+    dipy_fetch "bundle_atlas_hcp842" --out_dir $(pwd)
 fi
-dipy_fetch "bundle_atlas_hcp842" --out_dir $(pwd)
+PROGRESSIVE=`jq -r '.progressive' config.json`
+if [ "$PROGRESSIVE" = true ]; then
+    PROGRESSIVE="--progressive"
+else
+    PROGRESSIVE=" "
+fi
 $cmd --force \
     --out_dir $(pwd) \
-    --x0 $(jq -r .b0_threshold config.json) \
-    --rm_small_clusters $(jq -r .b0_threshold config.json) \
-    --greater_than $(jq -r .b0_threshold config.json) \
-    --less_than $(jq -r .b0_threshold config.json) \
-    --nb_pts $(jq -r .b0_threshold config.json) \
-    --progressive $(jq -r .b0_threshold config.json) \
+    --x0 $(jq -r .x0 config.json) \
+    --rm_small_clusters $(jq -r .rm_small_clusters config.json) \
+    --greater_than $(jq -r .greater_than config.json) \
+    --less_than $(jq -r .less_than config.json) \
+    --nb_pts $(jq -r .nb_pts config.json) \
+    $PROGRESSIVE  \
     --out_moved "tractogram.trk"
     $STATIC_TRK $(jq -r .moving_tracks config.json) --mix_names
 EOF
