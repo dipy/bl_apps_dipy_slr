@@ -1,10 +1,10 @@
 {
-    "command": "dipy_slr",
-    "x0":'affine',
-    "rm_small_clusters":50,
-    "greater_than":50,
-    "less_than":250,
-    "nb_pts":20,
-    "static_tracks":"*.trk",
-    "moving_tracks":"*.trk"
+    "x0": "affine",
+    "rm_small_clusters": 50,
+    "greater_than": 50,
+    "less_than": 250,
+    "nb_pts": 20,
+    "progressive": true,
+    "static_track": "testdata/static.trk",
+    "moving_track": "testdata/moving.trk"
 }

@@ -1,46 +1,33 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=6
+#PBS -l nodes=1:ppn=8
 #PBS -l vmem=16gb
 #PBS -l walltime=10:00:00
+
+export SINGULARITYENV_OMP_NUM_THREADS=7
 
 set -e
 set -x
 
-cmd=`jq -r .command config.json`
-case "$cmd" in
+mkdir -p output
+chmod -R +w output
 
-    dipy_slr)
-        cat > script.sh <<EOF
-#!/bin/bash
-STATIC_TRK=`jq -r '.static_tracks' config.json`
-if [ "$STATIC_TRK" == "null" ]; then
-    STATIC_TRK=$(pwd)/bundle_atlas_hcp842/Atlas_in_MNI_Space_16_bundles/whole_brain/whole_brain_MNI.trk
-    dipy_fetch "bundle_atlas_hcp842" --out_dir $(pwd)
-fi
-PROGRESSIVE=`jq -r '.progressive' config.json`
-if [ "$PROGRESSIVE" = true ]; then
+if $PROGRESSIVE
+then
     PROGRESSIVE="--progressive"
 else
-    PROGRESSIVE=" "
+    PROGRESSIVE=""
 fi
-$cmd --force \
-    --out_dir $(pwd) \
+
+time singularity exec -e docker://brainlife/dipy:1.1.1 dipy_slr \
+    --force \
+    --out_dir output \
+    --out_moved track.trk \
     --x0 $(jq -r .x0 config.json) \
     --rm_small_clusters $(jq -r .rm_small_clusters config.json) \
     --greater_than $(jq -r .greater_than config.json) \
     --less_than $(jq -r .less_than config.json) \
     --nb_pts $(jq -r .nb_pts config.json) \
     $PROGRESSIVE  \
-    --out_moved "tractogram.trk"
-    "$STATIC_TRK" $(jq -r .moving_tracks config.json) --mix_names
-EOF
-        ;;
-    *)
-        echo "invalid command: $cmd"
-        exit 1
-esac
-
-chmod +x script.sh
-SINGULARITYENV_PYTHONNOUSERSITE=true singularity exec -e docker://brainlife/dipy:1.1.1 ./script.sh
+    $(jq -r .static_track config.json) $(jq -r .moving_track config.json)
 
 echo "done"
