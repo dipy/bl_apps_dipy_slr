@@ -11,6 +11,8 @@ set -x
 mkdir -p output
 chmod -R +w output
 
+PROGRESSIVE=$(jq -r .progressive config.json)
+
 if $PROGRESSIVE
 then
     PROGRESSIVE="--progressive"
