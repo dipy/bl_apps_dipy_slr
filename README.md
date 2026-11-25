@@ -3,6 +3,52 @@
 
 # Dipy Streamline Linear Registration
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Registers a moving .trk tractogram to a static one with DIPY Streamline-based Linear Registration (dipy_slr) and outputs the moved tractogram.**
+
+Wraps the DIPY 1.1.1 dipy_slr workflow: filters streamlines by length, clusters them with QuickBundles, removes small clusters and finds the affine, rigid or similarity transform that aligns the moving bundle set to the static one. Use it to align tractograms across subjects or to an atlas tractogram. Both inputs must be TrackVis .trk files.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/track/trk` ×2 |
+| 📤 **Outputs** | `neuro/track/trk` |
+| 🐳 **Container** | `brainlife/dipy:1.1.1` |
+| ⚙️ **Resources** | 8 CPUs · 16 GB memory · 10 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.332](https://doi.org/10.25663/brainlife.app.332) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `static_tracks` | `neuro/track/trk` | yes | Reference (static) tractogram in .trk format. |
+| `moving_tracks` | `neuro/track/trk` | yes | Tractogram in .trk format to be moved onto the static one. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `output` | `neuro/track/trk` | The moving tractogram after linear registration (track.trk). |
+
+<details>
+<summary><b>⚙️ Parameters</b> (6)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `x0` | enum | `affine` | Affine, rigid, or similarity transformation model (default affine) Options: `affine`, `rigid`, `similarity`. |
+| `rm_small_clusters` | number | `50` | Remove clusters that have less than rm_small_clusters |
+| `greater_than` | number | `50` | Keep streamlines that have length greater than this value |
+| `less_than` | number | `250` | Keep streamlines have length less than this value |
+| `nb_pts` | number | `20` | Number of points for discretizing each streamline |
+| `progressive` | boolean | `true` | Use progressive registration (dipy_slr --progressive), fitting translation, rigid, similarity and affine stages in turn. |
+
+</details>
+
+📚 **References used by this App:**
+- Garyfallidis E, Brett M, Amirbekian B, et al. Dipy, a library for the analysis of diffusion MRI data. Front Neuroinform 8:8 (2014). [doi:10.3389/fninf.2014.00008](https://doi.org/10.3389/fninf.2014.00008)
+
+<!-- brainlife-app:end -->
+
 The App uses the Streamline Linear Registration (SLR) method to align your tractography data.
 
 ### Authors
